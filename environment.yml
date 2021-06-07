@@ -1,0 +1,15 @@
+name: netcdf-class
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.6
+  - numpy
+  - netcdf4
+  - xarray
+  - pandas
+  - matplotlib
+  - jupyter
+  - ncl
+  - cdo
+  - nco
+  - bash
