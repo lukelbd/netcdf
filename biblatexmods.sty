@@ -1,0 +1,44 @@
+%-----------------------------------------------------------------------------%
+% Bibliography setup for beamer presentations
+%-----------------------------------------------------------------------------%
+% Packages (authoryear is for citations, other stuff for bib entries)
+% Cannot use 'natbib' package with beamer it breaks; must use biblatex
+\hypersetup{colorlinks=true,linkcolor=,citecolor=cyan} % empty chooses default
+\usepackage[backend=bibtex,url=false,doi=false,isbn=false,style=authoryear]{biblatex}
+\setbeamertemplate{bibliography item}{} % no more ooglay document icons
+\addbibresource{refs.bib}
+\renewcommand*{\nameyeardelim}{\addspace}  % parencite settings
+% \nocite{*}  % list entire contents even if not present
+
+% Black magic that makes entire citation clickable
+% Did not include the '*' declarecitecommands, they don't seem to do anything
+% See: https://tex.stackexchange.com/q/1687/73149
+\DeclareCiteCommand{\cite}%
+  {\usebibmacro{prenote}}%
+  {\usebibmacro{citeindex}\printtext[bibhyperref]{\usebibmacro{cite}}}%
+  {\multicitedelim}%
+  {\usebibmacro{postnote}}
+\DeclareCiteCommand{\citep}[\mkbibparens]%
+  {\usebibmacro{prenote}}%
+  {\usebibmacro{citeindex}\printtext[bibhyperref]{\usebibmacro{cite}}}%
+  {\multicitedelim}%
+  {\usebibmacro{postnote}}
+\DeclareCiteCommand{\citet}%
+  {\boolfalse{cbx:parens}}%
+  {%
+    \usebibmacro{citeindex}\printtext[bibhyperref]{%
+      \printnames{labelname}\printtext{ (\printfield{year}\printtext{)}}%
+    }%
+  }%
+  {\ifbool{cbx:parens}{\bibcloseparen\global\boolfalse{cbx:parens}}{}\multicitedelim}%
+  {\usebibmacro{textcite:postnote}}
+\DeclareCiteCommand{\citefp}[\mkbibfootnote]%
+  {\usebibmacro{prenote}}%
+  {\usebibmacro{citeindex}\printtext[bibhyperref]{ \usebibmacro{cite}}}%
+  {\multicitedelim}%
+  {\usebibmacro{postnote}}
+\DeclareCiteCommand{\citeft}[\mkbibfootnotetext]%
+  {\usebibmacro{prenote}}%
+  {\usebibmacro{citeindex}\printtext[bibhyperref]{\usebibmacro{cite}}}%
+  {\multicitedelim}%
+  {\usebibmacro{postnote}}

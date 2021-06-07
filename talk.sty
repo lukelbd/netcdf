@@ -1,0 +1,227 @@
+%-----------------------------------------------------------------------------%
+% Simple style for talks
+%-----------------------------------------------------------------------------%
+% General theme. Note Zurich theme and others that require xelatex broken for now.
+% Cause weird errors and font rendering to white.
+\RequirePackage{beamerthememetropolis}  % or \usetheme{metropolis}
+
+% Font family
+\RequirePackage{fontspec}
+\RequirePackage{beamerfontthemestructurebold}  % or \usefonttheme{structurebold}
+% \RequirePackage{beamerfontthemeprofessionalfonts}  % or \usefonttheme{professionalfonts}
+\setsansfont{TeX Gyre Heros}  % Helvetica lookalike
+\renewcommand{\mathrm}{\mathsf}  % shorthand for non-italicized math text
+\setbeamerfont{frametitle}{size=\Large}  % default is way too small
+
+% Monochrome colors
+% * Can go deeper/more specific but these *should* be all you need
+% * Make sure this stuff comes after you declare the beamer package
+\definecolor{white}{RGB}{251,251,251} % default
+\definecolor{main}{HTML}{ba5137}   % red
+\definecolor{main}{HTML}{1E4D2B}   % green, CSU
+\definecolor{main}{RGB}{0,0,0}   % black
+\definecolor{darkcharcoal}{HTML}{4D4944}
+\definecolor{darkcharcoal}{HTML}{3D3934}
+\colorlet{charcoal}{darkcharcoal!60!white}
+\colorlet{lightcharcoal}{darkcharcoal!20!white}
+\colorlet{main}{darkcharcoal}
+\setbeamertemplate{frametitle}[plain]
+\setbeamercolor{palette primary}{bg=white,fg=main}
+\setbeamercolor{title}{bg=white,fg=main}
+\setbeamercolor{subtitle}{bg=white,fg=main}
+\setbeamercolor{frametitle}{bg=white,fg=main}
+\setbeamercolor{normal text}{bg=white,fg=main}
+\setbeamercolor{alerted text}{bg=white,fg=lightcharcoal} % title line has same style as alerted text!
+
+% Frame title customization
+% Shading from: https://tex.stackexchange.com/q/110138/73149
+\setbeamertemplate%
+  {background canvas}%
+  [vertical shading]%
+  [top=main!10,middle=main!0,bottom=main!0,midpoint=0]
+
+% Vertical spacing
+\RequirePackage{parskip} % no indents between paragraphcs
+\setlength{\parskip}{0.5em} % small spacing
+\setbeamertemplate{footline}{\vspace{0.2cm}} % standardize footnote spacing
+\setbeamersize{text margin left=15pt,text margin right=15pt} % fix margins
+
+% List styling
+% See this: https://tex.stackexchange.com/a/31524/73149
+% Needs etoolbox package; this one failed
+% \makeatletter\patchcmd{\@listI}{\itemsep3\p@}{\itemsep5em}{}{}\makeatother
+% See this: https://tex.stackexchange.com/a/225737/73149
+% Zero is default and each number controls level
+\RequirePackage{xpatch} % for the list \patch fix
+\xpatchcmd{\itemize}{\def\makelabel}{\ifnum\@itemdepth=1\relax
+\setlength\itemsep{0ex}\else\ifnum\@itemdepth=2\relax
+\setlength\itemsep{-1ex}\else\ifnum\@itemdepth=3\relax
+\setlength\itemsep{-1ex}\fi\fi\fi\def\makelabel}{}{}
+
+% Pretty code environments, without listings package
+% In future should probably use listings package
+\RequirePackage{upquote} % make verbatim quotes vertical
+\RequirePackage{xcolor}
+\RequirePackage{verbatim}
+\RequirePackage{adjustbox}
+\definecolor{shadecolor}{rgb}{.93,.93,.93}
+\newenvironment{code}{%
+  \par\noindent\center\adjustbox{%
+    margin=1ex,bgcolor=shadecolor,margin=0ex\medskipamount%
+  }\bgroup\varwidth\linewidth\verbatim%
+}{\endverbatim\endvarwidth\egroup\endcenter}
+
+% Disable navigation icons
+% Turn off compression of little dots (keep inline)
+\beamertemplatenavigationsymbolsempty  % disable navigation icons
+\makeatletter
+  \beamer@compressfalse
+  \newcommand*{\compresson}{\addtocontents{nav}{\protect\headcommand{\protect\beamer@compresstrue}}}
+  \newcommand*{\compressoff}{\addtocontents{nav}{\protect\headcommand{\protect\beamer@compressfalse}}}
+\makeatother
+
+% Add section headers and optionally change size
+% Disable for very short talks, not useful then
+% See this: https://tex.stackexchange.com/a/364940/73149
+% For changing size see: https://tex.stackexchange.com/q/365109/73149
+% NOTE: To avoid headline, use \begin{frame}[plain], background color will stay.
+\setbeamertemplate{headline}{%
+  \begin{beamercolorbox}[colsep=1.5pt]{upper separation line head}
+  \end{beamercolorbox}
+  \begin{beamercolorbox}{section in head/foot}
+    \vskip2pt\insertnavigation{\paperwidth}\vskip4pt
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[colsep=1.5pt]{lower separation line head}
+  \end{beamercolorbox}
+}
+\setbeamerfont{section in head/foot}{size=\fontsize{6}{6}\selectfont}
+
+% Add section headers omitting the little dots
+% See: https://tex.stackexchange.com/a/354904/73149
+% \makeatletter
+% \setbeamertemplate{headline}
+% {%
+%   \begin{beamercolorbox}[ht=3.5ex,dp=2.125ex]{section in head/foot}
+%     \usebeamerfont{section in head/foot}%
+%     \usebeamercolor[fg]{section in head/foot}%
+%     \insertsectionnavigationhorizontal{\textwidth}{}{}
+%   \end{beamercolorbox}%
+%   \begin{beamercolorbox}[colsep=1.5pt]{lower separation line head}
+%   \end{beamercolorbox}
+% }
+% \makeatother
+% \setbeamerfont{section in head/foot}{size=\fontsize{6}{6}\selectfont}
+
+% Transparent header
+% This allows us to have smooth shading gradation from bottom to top of slides
+\makeatletter
+\setbeamertemplate{frametitle}
+{
+  \ifbeamercolorempty[bg]{frametitle}{}{\nointerlineskip}%
+  \@tempdima=\textwidth%
+  \advance\@tempdima by\beamer@leftmargin%
+  \advance\@tempdima by\beamer@rightmargin%
+  \pgfsetfillopacity{0}       %<------ fix filling opacity
+  \begin{beamercolorbox}[sep=0.3cm,left,wd=\the\@tempdima]{frametitle}
+    \usebeamerfont{frametitle}%
+    \vbox{}\vskip-1ex%
+    \if@tempswa\else\csname beamer@fteleft\endcsname\fi%
+    \strut\pgfsetfillopacity{1}\insertframetitle\strut\par%  <---- text opacity
+    {%
+      \ifx\insertframesubtitle\@empty%
+      \else%
+      {\usebeamerfont{framesubtitle}%
+      \usebeamercolor[fg]{framesubtitle}%
+      \insertframesubtitle\strut\par}%
+      \fi
+    }%
+    \vskip-1ex%
+    \if@tempswa\else\vskip-.3cm\fi% set inside beamercolorbox... evil here...
+  \end{beamercolorbox}%
+}
+\makeatother
+
+% Faded figures similar to faded text. Must wrap includegraphics inside hidecontent.
+% See: https://tex.stackexchange.com/a/96425/73149
+\RequirePackage{transparent}  % http://ctan.org/pkg/transparent
+\setbeamercovered{%
+  transparent,
+  again covered={\opaqueness<1->{20}},  % play around with values
+  still covered={\opaqueness<1->{20}}
+  % again covered={\opaqueness<1->{30}},  % play around with values
+  % still covered={\opaqueness<1>{20}\opaqueness<2>{15}\opaqueness<3->{10}}
+}
+% Option A: Wrap \includegraphics with \hidecontent
+\RequirePackage{graphicx}
+\newcommand{\hidecontent}[2][0.25]{{% \hidecontent[<transparency>]{<stuff>}
+  \setbox9=\hbox{#2}% Store <stuff> in \box9 to obtain height/width
+  \transparent{#1}\ooalign{\usebox9\cr\color{white}\rule{\wd9}{\ht9}\cr}%
+}}
+% Option B: Overload \includegraphics as in fixpauseincludegraphics
+% Fails when not using \pause: https://web.archive.org/web/20140511130153/http://funkysea.com/?p=6
+% \RequirePackage{graphicx}
+% \RequirePackage{tikz}
+% \let\oldincludegraphics\includegraphics
+% \renewcommand*{\includegraphics}[2][]{%
+%     \begin{tikzpicture}%
+%       {\node[opacity=\transparent@value/100, style={inner sep=0, outer sep=0}]{\oldincludegraphics[#1]{#2}};}%
+%     \end{tikzpicture}%
+% }
+% \makeatletter
+% \gdef\transparent@value{100}
+% \newcommand{\getbeamertrans}{
+%     \transparent@value/100
+% }
+% \newcommand{\set@transparent}[1]{\gdef\transparent@value{#1}}
+% \def\opaquenessCustom#1{%
+% \only<1->{%
+%   \beamer@actions{%
+%     \set@transparent{#1}%
+%     \expandafter\xdef\csname beamer@oldcolorhook%
+%     \the\beamer@coveringdepth\endcsname{\beamer@colorhook}%
+%     \expandafter\xdef\csname beamer@oldpgfextension%
+%     \the\beamer@coveringdepth\endcsname{\beamer@pgfextension}%
+%     {\globalcolorstrue\colorlet{beamer@freeze\the\beamer@coveringdepth}{bg}}%
+%     \xdef\beamer@colorhook{!#1!beamer@freeze%
+%       \the\beamer@coveringdepth\beamer@colorhook}%
+%     \gdef\beamer@pgfextension{!#1opaque}%
+%     \color{.}%
+%   }%
+%   {%
+%     \set@transparent{100}%
+%     \xdef\beamer@colorhook{\csname beamer@oldcolorhook%
+%       \the\beamer@coveringdepth\endcsname}%
+%     \xdef\beamer@pgfextension{\csname beamer@oldpgfextension%
+%       \the\beamer@coveringdepth\endcsname}%
+%     \color{.}%
+%   }}%
+% }%
+% \define@key{beamer@mixin}{transparent}[15]{%
+%     \def\beamer@uncoverbeforeactions{\ignorespaces\opaquenessCustom{#1}}%
+%     \def\beamer@uncoverafteractions{\ignorespaces\opaquenessCustom{#1}}%
+% }
+% \makeatother
+% \setbeamercovered{transparent}
+
+% Mini frames
+% \useoutertheme{miniframes}  % allow stacking
+% \setbeamertemplate{mini frames}{}
+% \setbeamertemplate{mini frames}[tick]{}
+% \setbeamertemplate{mini frame}[tick]
+% \makeatletter
+% \def\insertsectionnavigationhorizontal#1#2#3{%
+%  \hbox to #1{{%
+%    \def\slideentry##1##2##3##4##5##6{}%
+%    #2\hskip.3cm%
+%    \newdimen\tmp@parbox%
+%    \setlength\tmp@parbox{#1}%
+%    \addtolength\tmp@parbox{-.6cm}%
+%    \parbox{\tmp@parbox}{\raggedleft%
+%      \usebeamerfont{section in head/foot}\usebeamercolor[fg]{section in head/foot}%
+%      \setbox\beamer@sectionbox=\hbox{}%
+%      \ht\beamer@sectionbox=1.875ex%
+%      \dp\beamer@sectionbox=0.75ex%
+%      \hskip-1.875ex plus-1fill\dohead%
+%      \box\beamer@sectionbox}\hfil\hskip.3cm%
+%      #3}}}
+% \makeatother
