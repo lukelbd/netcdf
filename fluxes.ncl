@@ -1,7 +1,7 @@
 ; Sample NCL file
 ; This is a comment
-f = addfile("data/fluxes_input.nc", "r")
-o = addfile("data/fluxes_output.nc", "c")
+f = addfile("data/atmosphere.nc", "r")
+o = addfile("data/atmosphere_ncl.nc", "c")
 t = f->t
 v = f->v
 printVarSummary(t)
